@@ -2,7 +2,7 @@ package entity
 
 type User struct {
 	ID           int64  `db:"user_id`
-	UUID         string `db:"uuid"`
+	UUID         string `db:"user_uuid"`
 	FullName     string `db:"name"`
 	Email        string `db:"email"`
 	Phone        string `db:"phone"`

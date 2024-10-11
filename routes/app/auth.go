@@ -6,6 +6,7 @@ import (
 	"pennywise-api/routes/routeutils"
 
 	"github.com/labstack/echo/v4"
+	"github.com/pkg/errors"
 )
 
 func RegisterAuthRoutes(e *echo.Group) {
@@ -16,13 +17,17 @@ func RegisterAuthRoutes(e *echo.Group) {
 	e.POST(createUser, handleCreateUser)
 }
 
-func handleCreateUser(c echo.Context) error {
+func handleCreateUser(c echo.Context) (err error) {
 	request := viewmodel.SignupRequest{}
-	c.Bind(&request)
-	user, err := controller.CreateUser(c, request)
-	if err != nil {
-		return err
+
+	if err = c.Bind(&request); err != nil {
+		return errors.Wrap(err, "failed to bind request")
 	}
 
-	return routeutils.ResponseAPIOK(c, user)
+	user, err := controller.CreateUser(c, request)
+	if err != nil {
+		return errors.Wrap(err, "failed to create user")
+	}
+
+	return routeutils.ResponseCreated(c, user)
 }
